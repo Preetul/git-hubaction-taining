@@ -90,7 +90,7 @@ jobs:
         uses: jdcargile/ms-teams-notification@v1.3
         with:
           github-token: ${{ github.token }} # this will use the runner's token.
-          ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK }}
+          ms-teams-webhook-uri: ${{ secrets.MS_TEAM_WEBHOOK }}
           notification-summary: Message from Repository created for General Mills Session, to the Thinknyx Teams Channel
           notification-color: 17a2b8
           timezone: Asia/Kolkata 
