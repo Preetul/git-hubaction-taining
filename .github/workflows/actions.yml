@@ -15,8 +15,14 @@
   # - key1: valuec
   #   key2: valued
 name: first_work
-on:
+on: 
+  # run on all branches
   push: 
+  # enable manual execution
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 jobs: 
   first_job:
     runs-on: ubuntu-latest
@@ -27,13 +33,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2 # checkout/clone the repository in the runner GITHUB_WORKSPACE
-     # - name: run script
-      #  run: chmod 755 script.sh && ./script.sh
+      - name: run script
+        run: chmod 755 script.sh && ./script.sh
       - name: running multiple line
         run: |
           chmod 755 script.sh
-          ./script.sh     
-  
+          ./script.sh
   installing_packages:
     runs-on: ubuntu-latest
     steps: 
@@ -46,7 +51,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y terraform
           terraform --version >> data.txt
-          aws --version >> data.txt      
+          aws --version >> data.txt
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with: 
@@ -64,7 +69,7 @@ jobs:
         run: cat data.txt
     needs: 
       - installing_packages
-      - running_script_from_code  
+      - running_script_from_code
   deploy_on_production:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
@@ -74,15 +79,18 @@ jobs:
       - name: Deploy on Production
         run: | 
           echo Running Production Deployment
-# integration Teams Channel with GithUb Actions
-  gitHub_Actions_to_Teams:
+  
+  # integration Teams Channel with GithUb Actions
+  GitHub_Actions_to_Teams:
+    needs:
+      - download_artifacts
     runs-on: ubuntu-latest
     steps:
       - name: send message
         uses: jdcargile/ms-teams-notification@v1.3
         with:
           github-token: ${{ github.token }} # this will use the runner's token.
-          ms-teams-webhook-uri: ${{ secrets.MS_TEAM_WEBHOOK }}
-          notification-summary: Message from Repository created for General Mills Session. 
+          ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK }}
+          notification-summary: Message from Repository created for General Mills Session, to the Thinknyx Teams Channel
           notification-color: 17a2b8
           timezone: Asia/Kolkata 
